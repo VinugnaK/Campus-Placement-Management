@@ -1,18 +1,53 @@
 package com.application.project.placementofficer;
 
+import com.application.project.college.College;
+import com.application.project.college.CollegeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.Optional;
 
-public interface PlacementOfficerService {
+@Service
+public class PlacementOfficerService {
 
-    PlacementOfficer createPlacementOfficer(PlacementOfficer officer);
+    @Autowired
+    private PlacementOfficerRepository poRepository;
 
-    PlacementOfficer getPlacementOfficerById(Integer id);
+    @Autowired
+    private CollegeRepository collegeRepository;
 
-    List<PlacementOfficer> getPlacementOfficersByCollegeId(Integer collegeId);
+    public PlacementOfficer createPlacementOfficer(PlacementOfficer officer) {
+        return poRepository.save(officer);
+    }
 
-    PlacementOfficer updatePlacementOfficer(Integer id, PlacementOfficer officer);
+    public PlacementOfficer getPlacementOfficerById(Integer id) {
+        return poRepository.findById(id).orElse(null);
+    }
 
-    void deletePlacementOfficer(Integer id);
+    public List<PlacementOfficer> getPlacementOfficersByCollegeId(Integer collegeId) {
+        Optional<College> college = collegeRepository.findById(collegeId);
+        return college.map(poRepository::findByCollege)
+                      .orElse(List.of());
+    }
 
-    List<PlacementOfficer> getAllPlacementOfficers();
+    public PlacementOfficer updatePlacementOfficer(Integer id, PlacementOfficer officer) {
+        return poRepository.findById(id)
+                .map(existing -> {
+                    existing.setName(officer.getName());
+                    existing.setPhoneNumber(officer.getPhoneNumber());
+                    existing.setEmail(officer.getEmail());
+                    existing.setCollege(officer.getCollege());
+                    return poRepository.save(existing);
+                })
+                .orElse(null);
+    }
+
+    public void deletePlacementOfficer(Integer id) {
+        poRepository.deleteById(id);
+    }
+
+    public List<PlacementOfficer> getAllPlacementOfficers() {
+        return poRepository.findAll();
+    }
 }

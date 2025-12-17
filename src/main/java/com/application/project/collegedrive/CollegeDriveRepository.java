@@ -1,9 +1,11 @@
 package com.application.project.collegedrive;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
 public interface CollegeDriveRepository extends JpaRepository<CollegeDrive, Integer> {
-    // No extra methods required
+
+    List<CollegeDrive> findByDrive_Id(Integer driveId);
+
+    List<CollegeDrive> findByCollege_Id(Integer collegeId);
 }

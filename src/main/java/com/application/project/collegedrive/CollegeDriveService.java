@@ -1,7 +1,6 @@
 package com.application.project.collegedrive;
 
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -13,34 +12,38 @@ public class CollegeDriveService {
         this.repository = repository;
     }
 
-    public List<CollegeDrive> getAllDrives() {
+    public CollegeDrive create(CollegeDrive collegeDrive) {
+        return repository.save(collegeDrive);
+    }
+
+    public List<CollegeDrive> getAll() {
         return repository.findAll();
     }
 
-    public CollegeDrive getDriveById(Integer id) {
-        return repository.findById(id).orElse(null);
-    }
-
-    public CollegeDrive createDrive(CollegeDrive drive) {
-        return repository.save(drive);
-    }
-
-    public CollegeDrive updateDrive(Integer id, CollegeDrive updatedDrive) {
+    public CollegeDrive getById(Integer id) {
         return repository.findById(id)
-                .map(drive -> {
-                    drive.setDriveId(updatedDrive.getDriveId());
-                    drive.setCollegeId(updatedDrive.getCollegeId());
-                    return repository.save(drive);
-                })
-                .orElse(null);
+                .orElseThrow(() ->
+                        new RuntimeException("CollegeDrive not found with id: " + id));
     }
 
-    public boolean deleteDrive(Integer id) {
-        return repository.findById(id)
-                .map(drive -> {
-                    repository.delete(drive);
-                    return true;
-                })
-                .orElse(false);
+    public List<CollegeDrive> getByDriveId(Integer driveId) {
+        return repository.findByDrive_Id(driveId);
+    }
+
+    public List<CollegeDrive> getByCollegeId(Integer collegeId) {
+        return repository.findByCollege_Id(collegeId);
+    }
+
+    public CollegeDrive update(Integer id, CollegeDrive updated) {
+        CollegeDrive existing = getById(id);
+
+        existing.setDrive(updated.getDrive());
+        existing.setCollege(updated.getCollege());
+
+        return repository.save(existing);
+    }
+
+    public void delete(Integer id) {
+        repository.deleteById(id);
     }
 }

@@ -12,34 +12,35 @@ public class CollegeController {
     @Autowired
     private CollegeService collegeService;
 
-    // CREATE College
     @PostMapping
-    public College createCollege(@RequestBody College college) {
+    public College create(@RequestBody College college) {
         return collegeService.createCollege(college);
     }
 
-    // GET All Colleges
-    @GetMapping
-    public List<College> getAllColleges() {
-        return collegeService.getAllColleges();
-    }
-
-    // GET College by ID
     @GetMapping("/{id}")
-    public College getCollegeById(@PathVariable Integer id) {
+    public College getById(@PathVariable Integer id) {
         return collegeService.getCollegeById(id);
     }
 
-    // UPDATE College
+    @GetMapping("/tier/{tierId}")
+    public List<College> getByTier(@PathVariable Integer tierId) {
+        return collegeService.getCollegesByTierId(tierId);
+    }
+
+    @GetMapping
+    public List<College> getAll() {
+        return collegeService.getAllColleges();
+    }
+
     @PutMapping("/{id}")
-    public College updateCollege(@PathVariable Integer id, @RequestBody College college) {
+    public College update(
+            @PathVariable Integer id,
+            @RequestBody College college) {
         return collegeService.updateCollege(id, college);
     }
 
-    // DELETE College (and delete its placement officers)
     @DeleteMapping("/{id}")
-    public String deleteCollege(@PathVariable Integer id) {
+    public void delete(@PathVariable Integer id) {
         collegeService.deleteCollege(id);
-        return "College deleted successfully!";
     }
 }

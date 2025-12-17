@@ -1,5 +1,6 @@
 package com.application.project.college;
 
+import com.application.project.tier.Tier;
 import jakarta.persistence.*;
 
 @Entity
@@ -8,20 +9,22 @@ public class College {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id") // matches your DB column 'id'
     private Integer id;
 
-    @Column(name = "name")
+    @Column(name = "name", length = 100)
     private String name;
 
-    @Column(name = "location")
+    @Column(name = "location", length = 50)
     private String location;
 
-    @Column(name = "tier")
-    private Integer tier;
+    // ✅ Foreign Key: college.tier → tier.id
+    @ManyToOne
+    @JoinColumn(name = "tier", referencedColumnName = "id")
+    private Tier tier;
 
     public College() {}
 
+    // getters & setters
     public Integer getId() {
         return id;
     }
@@ -30,7 +33,6 @@ public class College {
         this.id = id;
     }
 
-    // name
     public String getName() {
         return name;
     }
@@ -39,7 +41,6 @@ public class College {
         this.name = name;
     }
 
-    // location
     public String getLocation() {
         return location;
     }
@@ -48,12 +49,11 @@ public class College {
         this.location = location;
     }
 
-    // tier
-    public Integer getTier() {
+    public Tier getTier() {
         return tier;
     }
 
-    public void setTier(Integer tier) {
+    public void setTier(Tier tier) {
         this.tier = tier;
     }
 }

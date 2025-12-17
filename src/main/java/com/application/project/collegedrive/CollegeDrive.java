@@ -1,10 +1,8 @@
 package com.application.project.collegedrive;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.application.project.Drive.Drive;
+import com.application.project.college.College;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "collegedrive")
@@ -14,18 +12,18 @@ public class CollegeDrive {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Integer driveId;
-    private Integer collegeId;
+    // FK → drive.id
+    @ManyToOne
+    @JoinColumn(name = "driveId", referencedColumnName = "id")
+    private Drive drive;
 
-    // Constructors
-    public CollegeDrive() {}
+    // FK → college.id
+    @ManyToOne
+    @JoinColumn(name = "collegeId", referencedColumnName = "id")
+    private College college;
 
-    public CollegeDrive(Integer driveId, Integer collegeId) {
-        this.driveId = driveId;
-        this.collegeId = collegeId;
-    }
+    // -------- Getters & Setters --------
 
-    // Getters & Setters
     public Integer getId() {
         return id;
     }
@@ -34,19 +32,19 @@ public class CollegeDrive {
         this.id = id;
     }
 
-    public Integer getDriveId() {
-        return driveId;
+    public Drive getDrive() {
+        return drive;
     }
 
-    public void setDriveId(Integer driveId) {
-        this.driveId = driveId;
+    public void setDrive(Drive drive) {
+        this.drive = drive;
     }
 
-    public Integer getCollegeId() {
-        return collegeId;
+    public College getCollege() {
+        return college;
     }
 
-    public void setCollegeId(Integer collegeId) {
-        this.collegeId = collegeId;
+    public void setCollege(College college) {
+        this.college = college;
     }
 }

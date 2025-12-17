@@ -1,5 +1,6 @@
 package com.application.project.placementofficer;
 
+import com.application.project.college.College;
 import jakarta.persistence.*;
 
 @Entity
@@ -10,31 +11,60 @@ public class PlacementOfficer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = true)
+    @Column(name = "name", length = 100)
     private String name;
 
-    @Column(length = 10)
+    @Column(name = "phoneNumber", length = 10)
     private String phoneNumber;
 
-    @Column(nullable = true)
+    @Column(name = "email", length = 100)
     private String email;
 
-    @Column(name = "collegeId")
-    private Integer collegeId;
+    // ✅ Foreign Key mapping (collegeId → college.id)
+    @ManyToOne
+    @JoinColumn(name = "collegeId", referencedColumnName = "id")
+    private College college;
 
-    // Getters and Setters
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    public PlacementOfficer() {}
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    // Getters & Setters
+    public Integer getId() {
+        return id;
+    }
 
-    public String getPhoneNumber() { return phoneNumber; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getName() {
+        return name;
+    }
 
-    public Integer getCollegeId() { return collegeId; }
-    public void setCollegeId(Integer collegeId) { this.collegeId = collegeId; }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public College getCollege() {
+        return college;
+    }
+
+    public void setCollege(College college) {
+        this.college = college;
+    }
 }

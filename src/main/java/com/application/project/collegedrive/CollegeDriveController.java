@@ -1,11 +1,10 @@
 package com.application.project.collegedrive;
 
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/collegedrive")
+@RequestMapping("/collegedrives")
 public class CollegeDriveController {
 
     private final CollegeDriveService service;
@@ -14,34 +13,40 @@ public class CollegeDriveController {
         this.service = service;
     }
 
-    // GET ALL
+    @PostMapping
+    public CollegeDrive create(@RequestBody CollegeDrive collegeDrive) {
+        return service.create(collegeDrive);
+    }
+
     @GetMapping
     public List<CollegeDrive> getAll() {
-        return service.getAllDrives();
+        return service.getAll();
     }
 
-    // GET BY ID
     @GetMapping("/{id}")
     public CollegeDrive getById(@PathVariable Integer id) {
-        return service.getDriveById(id);
+        return service.getById(id);
     }
 
-    // CREATE
-    @PostMapping
-    public CollegeDrive create(@RequestBody CollegeDrive drive) {
-        return service.createDrive(drive);
+    @GetMapping("/drive/{driveId}")
+    public List<CollegeDrive> getByDriveId(@PathVariable Integer driveId) {
+        return service.getByDriveId(driveId);
     }
 
-    // UPDATE
+    @GetMapping("/college/{collegeId}")
+    public List<CollegeDrive> getByCollegeId(@PathVariable Integer collegeId) {
+        return service.getByCollegeId(collegeId);
+    }
+
     @PutMapping("/{id}")
-    public CollegeDrive update(@PathVariable Integer id, @RequestBody CollegeDrive drive) {
-        return service.updateDrive(id, drive);
+    public CollegeDrive update(
+            @PathVariable Integer id,
+            @RequestBody CollegeDrive collegeDrive) {
+        return service.update(id, collegeDrive);
     }
 
-    // DELETE
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Integer id) {
-        boolean deleted = service.deleteDrive(id);
-        return deleted ? "CollegeDrive deleted successfully!" : "CollegeDrive not found!";
+    public void delete(@PathVariable Integer id) {
+        service.delete(id);
     }
 }
