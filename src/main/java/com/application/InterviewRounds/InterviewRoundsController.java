@@ -6,39 +6,33 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/interviewrounds")
+@RequestMapping("/interview-rounds")
 public class InterviewRoundsController {
 
     @Autowired
     private InterviewRoundsService service;
 
-    // CREATE
     @PostMapping
     public InterviewRounds create(@RequestBody InterviewRounds interviewRounds) {
-        return service.create(interviewRounds);
+        return service.save(interviewRounds);
     }
 
-    // READ ALL
     @GetMapping
     public List<InterviewRounds> getAll() {
-        return service.getAll();
+        return service.findAll();
     }
 
-    // READ BY ID
     @GetMapping("/{id}")
     public InterviewRounds getById(@PathVariable Integer id) {
-        return service.getById(id);
+        return service.findById(id);
     }
 
-    // UPDATE
-    @PutMapping("/{id}")
-    public InterviewRounds update(
-            @PathVariable Integer id,
-            @RequestBody InterviewRounds interviewRounds) {
-        return service.update(id, interviewRounds);
+    @GetMapping("/student-drive-job/{id}")
+    public List<InterviewRounds> getByStudentDriveJob(
+            @PathVariable Integer id) {
+        return service.findByStudentDriveJob(id);
     }
 
-    // DELETE
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         service.delete(id);

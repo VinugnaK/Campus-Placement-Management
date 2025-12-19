@@ -1,12 +1,12 @@
 package com.application.Interview;
 
-import com.application.Employee.Employee;
-import com.application.InterviewStatus.InterviewStatus;
-import com.application.DetailedRound.DetailedRound;
-
-import jakarta.persistence.*;
+import jakarta.persistence.*;   // ⭐ THIS WAS CRITICAL
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import com.application.Employee.Employee;
+import com.application.InterviewStatus.InterviewStatus;
+import com.application.StudentDriveJob.StudentDriveJob;
 
 @Entity
 @Table(name = "interview")
@@ -16,44 +16,58 @@ public class Interview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // 🔗 FK → StudDriveJob (assuming DetailedRound)
+    // FOREIGN KEY Many-to-One mapping
     @ManyToOne
-    @JoinColumn(name = "studDriveJobId", nullable = false)
-    private DetailedRound studDriveJob;
+    @JoinColumn(name = "studDriveJobId", referencedColumnName = "id")
+    private StudentDriveJob studentDriveJob;
 
-    // 🔗 FK → Employee (panelist)
+    // FOREIGN KEY Many-to-One mapping
     @ManyToOne
-    @JoinColumn(name = "employeeId")
+    @JoinColumn(name = "employeeId", referencedColumnName = "id")
     private Employee employee;
 
+    @Column(name = "currentRound")
     private Integer currentRound;
 
-    // 🔗 FK → InterviewStatus
+    // FOREIGN KEY Many-to-One mapping
     @ManyToOne
-    @JoinColumn(name = "interviewStatusId", nullable = false)
+    @JoinColumn(name = "interviewStatusId", referencedColumnName = "id")
     private InterviewStatus interviewStatus;
 
+    @Column(name = "interviewLink")
     private String interviewLink;
+
+    @Column(name = "heLink")
     private String heLink;
 
+    @Column(name = "date")
     private LocalDate date;
+
+    @Column(name = "time")
     private LocalTime time;
 
+    @Column(name = "totalMarks")
     private Integer totalMarks;
+
+    @Column(name = "totalPercentage")
     private Integer totalPercentage;
 
-    // -------- getters & setters --------
+    // ===== getters & setters =====
 
     public Integer getId() {
         return id;
     }
 
-    public DetailedRound getStudDriveJob() {
-        return studDriveJob;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setStudDriveJob(DetailedRound studDriveJob) {
-        this.studDriveJob = studDriveJob;
+    public StudentDriveJob getStudentDriveJob() {
+        return studentDriveJob;
+    }
+
+    public void setStudentDriveJob(StudentDriveJob studentDriveJob) {
+        this.studentDriveJob = studentDriveJob;
     }
 
     public Employee getEmployee() {

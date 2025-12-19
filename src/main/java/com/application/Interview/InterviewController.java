@@ -1,10 +1,12 @@
 package com.application.Interview;
 
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+
+import com.application.Interview.Interview;
+import com.application.Interview.InterviewService;
 
 @RestController
-@RequestMapping("/interview")
+@RequestMapping("/interviews")
 public class InterviewController {
 
     private final InterviewService service;
@@ -15,24 +17,12 @@ public class InterviewController {
 
     @PostMapping
     public Interview create(@RequestBody Interview interview) {
-        return service.create(interview);
-    }
-
-    @GetMapping
-    public List<Interview> getAll() {
-        return service.getAll();
+        return service.save(interview);
     }
 
     @GetMapping("/{id}")
     public Interview getById(@PathVariable Integer id) {
-        return service.getById(id);
-    }
-
-    @PutMapping("/{id}")
-    public Interview update(
-            @PathVariable Integer id,
-            @RequestBody Interview interview) {
-        return service.update(id, interview);
+        return service.findById(id);
     }
 
     @DeleteMapping("/{id}")

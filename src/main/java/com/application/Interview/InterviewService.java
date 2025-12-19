@@ -1,56 +1,63 @@
-package com.application.Interview;
-
 import org.springframework.stereotype.Service;
-import java.util.List;
+
+import com.application.TierTotalRound.TierTotalRound;
+import com.application.TierTotalRound.TierTotalRoundRepository;
 
 @Service
 public class InterviewService {
 
-    private final InterviewRepository repo;
+    private final InterviewRepository interviewRepo;
+    private final TierTotalRoundRepository tierRepo;
 
-    public InterviewService(InterviewRepository repo) {
-        this.repo = repo;
+    public InterviewService(
+            InterviewRepository interviewRepo,
+            TierTotalRoundRepository tierRepo) {
+        this.interviewRepo = interviewRepo;
+        this.tierRepo = tierRepo;
     }
 
-    // CREATE
-    public Interview create(Interview interview) {
+    public Interview save(Interview interview) {
 
-        if (interview.getTotalMarks() != null) {
-            interview.setTotalPercentage(interview.getTotalMarks());
+        // Step 1: Student → College → Tier
+        Student student =
+                interview.getStudentDriveJob().getStudent();
+
+        Integer tier =
+                student.getCollege().getTier();
+
+        // Step 2: Tier → totalRounds
+        TierTotalRound tierTotalRound =
+                tierRepo.findByTier(tier)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Tier not configured: " + tier));
+
+        Integer totalRounds =
+                tierTotalRound.getTotalRounds();
+
+        // Step 3: Validate currentRound
+        if (interview.getCurrentRound() == null ||
+            interview.getCurrentRound() < 1) {
+            throw new IllegalArgumentException(
+                    "currentRound must be >= 1");
         }
 
-        return repo.save(interview);
+        if (interview.getCurrentRound() > totalRounds) {
+            throw new IllegalArgumentException(
+                    "currentRound exceeds max rounds (" +
+                    totalRounds + ") for tier " + tier);
+        }
+
+        return interviewRepo.save(interview);
     }
 
-    // READ ALL
-    public List<Interview> getAll() {
-        return repo.findAll();
+    public Interview findById(Integer id) {
+        return interviewRepo.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Interview not found"));
     }
 
-    // READ BY ID
-    public Interview getById(Integer id) {
-        return repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Interview not found"));
-    }
-
-    // UPDATE
-    public Interview update(Integer id, Interview updated) {
-        Interview existing = getById(id);
-
-        existing.setCurrentRound(updated.getCurrentRound());
-        existing.setInterviewStatus(updated.getInterviewStatus());
-        existing.setInterviewLink(updated.getInterviewLink());
-        existing.setHeLink(updated.getHeLink());
-        existing.setDate(updated.getDate());
-        existing.setTime(updated.getTime());
-        existing.setTotalMarks(updated.getTotalMarks());
-        existing.setTotalPercentage(updated.getTotalPercentage());
-
-        return repo.save(existing);
-    }
-
-    // DELETE
     public void delete(Integer id) {
-        repo.deleteById(id);
+        interviewRepo.deleteById(id);
     }
 }

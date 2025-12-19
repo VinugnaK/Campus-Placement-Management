@@ -1,59 +1,68 @@
 package com.application.InterviewRounds;
 
-import com.application.DetailedRound.DetailedRound;
+import jakarta.persistence.*;
+
+import com.application.StudentDriveJob.StudentDriveJob;
 import com.application.Employee.Employee;
 import com.application.InterviewStatus.InterviewStatus;
 import com.application.TierRound.TierRound;
 
-import jakarta.persistence.*;
-
 @Entity
-@Table(name = "interviewrounds")
+@Table(name = "interview_rounds")
 public class InterviewRounds {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // FK → studDriveJobId
+    // FK → student_drive_job.id
     @ManyToOne
-    @JoinColumn(name = "studDriveJobId", nullable = false)
-    private DetailedRound studDriveJob;
+    @JoinColumn(name = "studDriveJobId", referencedColumnName = "id")
+    private StudentDriveJob studentDriveJob;
 
-    // FK → roundId (TierRound)
+    // FK → tier_round.id  (roundId FK)
     @ManyToOne
-    @JoinColumn(name = "roundId", nullable = false)
+    @JoinColumn(name = "roundId", referencedColumnName = "id")
     private TierRound tierRound;
 
+    @Column(name = "totalScore")
     private Integer totalScore;
 
-    // FK → employeeId
+    // FK → employee.id
     @ManyToOne
-    @JoinColumn(name = "employeeId")
+    @JoinColumn(name = "employeeId", referencedColumnName = "id")
     private Employee employee;
 
+    @Column(name = "feedback")
     private String feedback;
 
-    // FK → interviewStatusId
+    // FK → interview_status.id
     @ManyToOne
-    @JoinColumn(name = "interviewStatusId", nullable = false)
+    @JoinColumn(name = "interviewStatusId", referencedColumnName = "id")
     private InterviewStatus interviewStatus;
 
+    @Column(name = "detailedScore")
     private String detailedScore;
+
+    @Column(name = "techSkillsRecommendation")
     private String techSkillsRecommendation;
 
-    // ---------- getters & setters ----------
+    // ===== Getters & Setters =====
 
     public Integer getId() {
         return id;
     }
 
-    public DetailedRound getStudDriveJob() {
-        return studDriveJob;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setStudDriveJob(DetailedRound studDriveJob) {
-        this.studDriveJob = studDriveJob;
+    public StudentDriveJob getStudentDriveJob() {
+        return studentDriveJob;
+    }
+
+    public void setStudentDriveJob(StudentDriveJob studentDriveJob) {
+        this.studentDriveJob = studentDriveJob;
     }
 
     public TierRound getTierRound() {

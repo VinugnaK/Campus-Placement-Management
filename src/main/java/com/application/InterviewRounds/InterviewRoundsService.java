@@ -3,48 +3,75 @@ package com.application.InterviewRounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.application.TierTotalRound.TierTotalRound;
+import com.application.TierTotalRound.TierTotalRoundRepository;
+
 import java.util.List;
 
 @Service
 public class InterviewRoundsService {
 
     @Autowired
-    private InterviewRoundsRepository repository;
+    private InterviewRoundsRepository interviewRoundsRepository;
 
-    // CREATE
-    public InterviewRounds create(InterviewRounds interviewRounds) {
-        return repository.save(interviewRounds);
+    @Autowired
+    private TierTotalRoundRepository tierTotalRoundRepository;
+
+    // CREATE (with max-round validation)
+    public InterviewRounds save(InterviewRounds interviewRounds) {
+
+        // student → college → tier
+        Integer tier = interviewRounds
+                .getStudentDriveJob()
+                .getStudent()
+                .getCollege()
+                .getTier();
+
+        // tier → totalRounds
+        TierTotalRound tierTotalRound =
+                tierTotalRoundRepository.findByTier(tier)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Tier not configured: " + tier));
+
+        Integer maxRounds = tierTotalRound.getTotalRounds();
+
+        // count existing rounds
+        long existingRounds =
+                interviewRoundsRepository.countByStudentDriveJob_Id(
+                        interviewRounds.getStudentDriveJob().getId()
+                );
+
+        if (existingRounds >= maxRounds) {
+            throw new RuntimeException(
+                    "Maximum interview rounds (" + maxRounds +
+                    ") already reached for this student"
+            );
+        }
+
+        return interviewRoundsRepository.save(interviewRounds);
     }
 
     // READ ALL
-    public List<InterviewRounds> getAll() {
-        return repository.findAll();
+    public List<InterviewRounds> findAll() {
+        return interviewRoundsRepository.findAll();
     }
 
     // READ BY ID
-    public InterviewRounds getById(Integer id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("InterviewRounds not found"));
+    public InterviewRounds findById(Integer id) {
+        return interviewRoundsRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Interview round not found"));
     }
 
-    // UPDATE
-    public InterviewRounds update(Integer id, InterviewRounds updated) {
-        InterviewRounds existing = getById(id);
-
-        existing.setStudDriveJob(updated.getStudDriveJob());
-        existing.setTierRound(updated.getTierRound());
-        existing.setTotalScore(updated.getTotalScore());
-        existing.setEmployee(updated.getEmployee());
-        existing.setFeedback(updated.getFeedback());
-        existing.setInterviewStatus(updated.getInterviewStatus());
-        existing.setDetailedScore(updated.getDetailedScore());
-        existing.setTechSkillsRecommendation(updated.getTechSkillsRecommendation());
-
-        return repository.save(existing);
+    // READ HISTORY BY STUDENT
+    public List<InterviewRounds> findByStudentDriveJob(Integer studDriveJobId) {
+        return interviewRoundsRepository
+                .findByStudentDriveJob_Id(studDriveJobId);
     }
 
     // DELETE
     public void delete(Integer id) {
-        repository.deleteById(id);
+        interviewRoundsRepository.deleteById(id);
     }
 }
